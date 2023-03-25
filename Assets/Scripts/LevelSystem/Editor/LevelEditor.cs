@@ -12,7 +12,7 @@ namespace LevelSystem
 
 		private bool setupClicked;
 
-		private string levelName;
+		private int levelNo;
 
 		private const float CELL_SIZE = 25;
 
@@ -21,6 +21,7 @@ namespace LevelSystem
 		{
 			var window = GetWindow<LevelEditor>();
 			window.titleContent = new GUIContent("Level Editor");
+			window.minSize = new Vector2(350, 350);
 			window.Show();
 		}
 
@@ -46,11 +47,10 @@ namespace LevelSystem
 				GUILayout.Space((cellCount + 1) * CELL_SIZE);
 
 				GUILayout.BeginHorizontal();
-				GUILayout.Label("Level Name: ");
-				levelName = GUILayout.TextField(levelName);
+				GUILayout.Label("Level Number:");
+				levelNo = EditorGUILayout.IntField(levelNo);
 				if (GUILayout.Button("Save"))
 				{
-					//
 					Save();
 				}
 
@@ -102,7 +102,7 @@ namespace LevelSystem
 
 		private void Save()
 		{
-			LevelFile.Save(cells, levelName);
+			LevelSystem.Save(cells, levelNo);
 		}
 	}
 }
