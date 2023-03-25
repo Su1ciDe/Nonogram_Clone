@@ -35,6 +35,7 @@ sysinfo.txt
 /*.tmp
 /*.svd
 /.idea
+/*.DotSettings
 
 # ============ #
 # OS generated #
