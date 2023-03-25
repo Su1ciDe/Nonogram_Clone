@@ -8,7 +8,7 @@ namespace LevelSystem
 		private static int cellCount;
 		private int cellCountField;
 
-		private Color[][] cellColors = new Color[cellCount][];
+		private bool[][] cells = new bool[cellCount][];
 
 		private bool setupClicked;
 
@@ -51,6 +51,7 @@ namespace LevelSystem
 				if (GUILayout.Button("Save"))
 				{
 					//
+					Save();
 				}
 
 				GUILayout.EndHorizontal();
@@ -60,16 +61,9 @@ namespace LevelSystem
 		private void SetupGrid()
 		{
 			cellCount = cellCountField;
-			cellColors = new Color[cellCount][];
-
+			cells = new bool[cellCount][];
 			for (int x = 0; x < cellCount; x++)
-			{
-				cellColors[x] = new Color[cellCount];
-				for (int y = 0; y < cellCount; y++)
-				{
-					cellColors[x][y] = Color.white;
-				}
-			}
+				cells[x] = new bool[cellCount];
 		}
 
 		private void Grid()
@@ -84,21 +78,14 @@ namespace LevelSystem
 				GUILayout.BeginHorizontal();
 				for (int y = 0; y < cellCount; y++)
 				{
-					var color = cellColors[x][y].Equals(Color.white) ? Texture2D.whiteTexture : Texture2D.blackTexture;
+					var color = cells[x][y] ? Texture2D.blackTexture : Texture2D.whiteTexture;
 					var buttonContent = new GUIContent();
-					var buttonRect = GUILayoutUtility.GetRect(buttonContent, "texture", GUILayout.Width(CELL_SIZE), GUILayout.Height(CELL_SIZE));
+					var buttonRect = GUILayoutUtility.GetRect(buttonContent, GUIStyle.none, GUILayout.Width(CELL_SIZE), GUILayout.Height(CELL_SIZE));
 
 					GUI.skin.button.normal.background = color;
 					if (GUI.Button(buttonRect, buttonContent))
 					{
-						if (cellColors[x][y].Equals(Color.white))
-						{
-							cellColors[x][y] = Color.black;
-						}
-						else if (cellColors[x][y].Equals(Color.black))
-						{
-							cellColors[x][y] = Color.white;
-						}
+						cells[x][y] = !cells[x][y];
 
 						Repaint();
 					}
@@ -115,7 +102,7 @@ namespace LevelSystem
 
 		private void Save()
 		{
-			
+			LevelFile.Save(cells, levelName);
 		}
 	}
 }
