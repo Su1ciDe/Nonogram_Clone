@@ -9,7 +9,7 @@ using Utility;
 
 namespace Grid
 {
-	public class GridCell : MonoBehaviour, IPointerClickHandler
+	public class GridCell : MonoBehaviour, IPointerDownHandler
 	{
 		public CellState CurrentState { get; set; } = CellState.Empty;
 		public CellState CorrectState { get; set; }
@@ -26,7 +26,7 @@ namespace Grid
 
 		public event UnityAction<GridCell> OnStateChanged;
 
-		public void OnPointerClick(PointerEventData eventData)
+		public void OnPointerDown(PointerEventData eventData)
 		{
 			if (!Player.Instance.CanPlay) return;
 

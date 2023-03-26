@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LevelSystem;
 using Managers;
 using UnityEngine;
@@ -14,15 +13,26 @@ namespace Grid
 		public int CellStateCount { get; private set; }
 		public int CellCount { get; set; }
 
+		[Header("Prefabs")]
 		[SerializeField] private GridCell cellPrefab;
+		[Space]
+		[SerializeField] private RectTransform numberRow;
+		[SerializeField] private RectTransform numberColumn;
+		[Space]
+		[SerializeField] private SideNumber sideNumberPrefab;
+
+		[Header("Layout")]
 		[SerializeField] private GridLayoutGroup gridLayout;
+		[Space]
+		[SerializeField] private RectTransform leftNumberPanel;
+		[SerializeField] private RectTransform topNumberPanel;
 
 		private float offset;
 		private Camera cam => GameManager.Instance.MainCamera;
 
 		private void Awake()
 		{
-			CellStateCount = Enum.GetNames(typeof(CellState)).Length;
+			CellStateCount = System.Enum.GetNames(typeof(CellState)).Length;
 		}
 
 		private void OnEnable()
@@ -57,6 +67,9 @@ namespace Grid
 
 			for (int x = 0; x < CellCount; x++)
 			{
+				var rowNumbers = new List<int>();
+				var columnNumbers = new List<int>();
+
 				for (int y = 0; y < CellCount; y++)
 				{
 					var cell = CreateCell(x, y);
@@ -64,6 +77,56 @@ namespace Grid
 					Cells[new Vector2Int(x, y)] = cell;
 
 					cell.OnStateChanged += OnCellStateChanged;
+
+					if (y > 0) //row
+					{
+						if (cells[x][y])
+						{
+							if (cells[x][y - 1])
+								rowNumbers[^1]++;
+							else
+								rowNumbers.Add(1);
+						}
+					}
+
+					if (x > 0) //column
+					{
+						if (cells[y][x])
+						{
+							if (cells[y - 1][x])
+								columnNumbers[^1]++;
+							else
+								columnNumbers.Add(1);
+						}
+					}
+				}
+
+				// row number generation 
+				numberRow.sizeDelta = new Vector2(numberRow.sizeDelta.x, cellScale);
+				var row = Instantiate(numberRow, leftNumberPanel);
+				int rowNumberCount = rowNumbers.Count;
+				if (rowNumberCount.Equals(0))
+				{
+					CreateNumber(0, row);
+				}
+				else
+				{
+					for (int i = 0; i < rowNumberCount; i++)
+						CreateNumber(rowNumbers[i], row);
+				}
+
+				// column number generation 
+				numberColumn.sizeDelta = new Vector2(cellScale, numberColumn.sizeDelta.y);
+				var column = Instantiate(numberColumn, topNumberPanel);
+				int columnNumberCount = columnNumbers.Count;
+				if (columnNumberCount.Equals(0))
+				{
+					CreateNumber(0, column);
+				}
+				else
+				{
+					for (int i = 0; i < columnNumberCount; i++)
+						CreateNumber(columnNumbers[i], column);
 				}
 			}
 		}
@@ -75,6 +138,12 @@ namespace Grid
 			cell.Y = y;
 			cell.gameObject.name = "Cell_" + x + "x" + y;
 			return cell;
+		}
+
+		private void CreateNumber(int _number, RectTransform parent)
+		{
+			var sideNumber = Instantiate(sideNumberPrefab, parent);
+			sideNumber.SetNumber(_number);
 		}
 
 		private void ClearAllCells()
