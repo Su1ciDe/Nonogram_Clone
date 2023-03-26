@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using static UnityEngine.JsonUtility;
@@ -7,19 +8,17 @@ namespace LevelSystem
 {
 	public static class LevelSystem
 	{
-		private const string PATH = "/Levels/Resources/";
+		private const string PATH = "/Resources/";
+		private const string LEVEL_FOLDER = "Levels/";
 		private const string LEVEL_NAME = "Level";
 		private const char SEPARATOR = '_';
+		private const string EXTENSION = ".json";
 
 		public static async Task Save(bool[][] cells, int levelNo)
 		{
-			string path = Application.dataPath + PATH + LEVEL_NAME + SEPARATOR + levelNo;
-			Debug.Log(path);
+			string path = Application.dataPath + PATH + LEVEL_FOLDER + LEVEL_NAME + SEPARATOR + levelNo + EXTENSION;
 			if (!Directory.Exists(Application.dataPath + PATH))
-			{
-				Debug.Log("asd");
-				return;
-			}
+				Directory.CreateDirectory(Application.dataPath + PATH);
 
 			if (File.Exists(path))
 			{
@@ -35,22 +34,26 @@ namespace LevelSystem
 
 		private static async Task SaveFileAsync(string path, string level)
 		{
-			await File.WriteAllTextAsync(path, level);
-			Debug.Log(path + " Saved!");
+			try
+			{
+				await File.WriteAllTextAsync(path, level);
+				Debug.Log(path + " Saved!");
+			}
+			catch (IOException e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
 		}
 
-		public static async Task<bool[][]> Load(int levelNo)
+		public static bool[][] Load(int levelNo)
 		{
-			string path = PATH + LEVEL_NAME + SEPARATOR + levelNo;
-			if (!File.Exists(path))
-			{
-				Debug.LogError(path + " does not exists!");
-				return null;
-			}
+			string path = LEVEL_FOLDER + LEVEL_NAME + SEPARATOR + levelNo;
 
-			var levelJson = await File.ReadAllTextAsync(path);
+			var resource = Resources.LoadAsync<TextAsset>(path);
+			var levelJson = ((TextAsset)resource.asset).text;
 
-			LevelFile levelFile = FromJson<LevelFile>(levelJson);
+			var levelFile = FromJson<LevelFile>(levelJson);
 			int count = levelFile.CellCount;
 			var result = new bool[count][];
 

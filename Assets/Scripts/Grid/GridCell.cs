@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using DG.Tweening;
+using Gameplay;
+using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using Utility;
@@ -9,6 +13,7 @@ namespace Grid
 	{
 		public CellState CurrentState { get; set; } = CellState.Empty;
 		public CellState CorrectState { get; set; }
+		public bool IsCorrect => CurrentState == CorrectState || (CurrentState == CellState.X && CorrectState == CellState.Empty);
 
 		public int X { get; set; }
 		public int Y { get; set; }
@@ -16,13 +21,16 @@ namespace Grid
 
 		[SerializeField] private GameObject filledState;
 		[SerializeField] private GameObject xState;
+		[Space]
+		[SerializeField] private Image incorrect;
 
 		public event UnityAction<GridCell> OnStateChanged;
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			ChangeState();
+			if (!Player.Instance.CanPlay) return;
 
+			ChangeState();
 			OnStateChanged?.Invoke(this);
 		}
 
@@ -43,6 +51,29 @@ namespace Grid
 					filledState.SetActive(false);
 					xState.SetActive(true);
 					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			CheckIncorrect();
+		}
+
+		private void CheckIncorrect()
+		{
+			if (IsCorrect)
+			{
+				incorrect.gameObject.SetActive(false);
+			}
+			else
+			{
+				incorrect.gameObject.SetActive(true);
+				incorrect.DOKill();
+				incorrect.DOFade(1, .5f).SetEase(Ease.InOutCirc).SetLoops(-1, LoopType.Yoyo).OnKill(() =>
+				{
+					var color = incorrect.color;
+					color.a = 0;
+					incorrect.color = color;
+				});
 			}
 		}
 	}

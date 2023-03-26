@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelSystem;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +11,9 @@ namespace Grid
 	public class Grid : Singleton<Grid>
 	{
 		public Dictionary<Vector2Int, GridCell> Cells { get; set; } = new Dictionary<Vector2Int, GridCell>();
-		public int CellStateCount;
+		public int CellStateCount { get; private set; }
+		public int CellCount { get; set; }
 
-		public int CellCount = 3;
 		[SerializeField] private GridCell cellPrefab;
 		[SerializeField] private GridLayoutGroup gridLayout;
 
@@ -24,20 +25,27 @@ namespace Grid
 			CellStateCount = Enum.GetNames(typeof(CellState)).Length;
 		}
 
-		private void Start()
+		private void OnEnable()
 		{
-			CreateGrid();
+			LevelManager.OnLevelLoad += OnLevelLoaded;
 		}
 
 		private void OnDestroy()
 		{
+			LevelManager.OnLevelLoad -= OnLevelLoaded;
 			foreach (var cell in Cells.Values)
 				cell.OnStateChanged -= OnCellStateChanged;
 		}
 
+		private void OnLevelLoaded(Level level)
+		{
+			CellCount = level.Cells.GetLength(0);
+			CreateGrid(level.Cells);
+		}
+
 		#region Grid Generation
 
-		public void CreateGrid()
+		public void CreateGrid(bool[][] cells)
 		{
 			ClearAllCells();
 
@@ -52,6 +60,7 @@ namespace Grid
 				for (int y = 0; y < CellCount; y++)
 				{
 					var cell = CreateCell(x, y);
+					cell.CorrectState = cells[x][y] ? CellState.Filled : CellState.Empty;
 					Cells[new Vector2Int(x, y)] = cell;
 
 					cell.OnStateChanged += OnCellStateChanged;
@@ -61,7 +70,7 @@ namespace Grid
 
 		private GridCell CreateCell(int x, int y)
 		{
-			var cell = Instantiate(cellPrefab, transform);
+			var cell = Instantiate(cellPrefab, gridLayout.transform);
 			cell.X = x;
 			cell.Y = y;
 			cell.gameObject.name = "Cell_" + x + "x" + y;
@@ -70,45 +79,24 @@ namespace Grid
 
 		private void ClearAllCells()
 		{
-#if UNITY_EDITOR
-			while (transform.childCount > 0)
-				DestroyImmediate(transform.GetChild(0).gameObject);
-#else
 			foreach (var cell in Cells.Values)
 			{
 				cell.OnStateChanged -= OnCellStateChanged;
 				Destroy(cell.gameObject);
 			}
-#endif
 		}
 
 		#endregion
 
-		private void OnCellStateChanged(GridCell cell)
+		private void OnCellStateChanged(GridCell changedCell)
 		{
-		}
+			foreach (var gridCell in Cells.Values)
+			{
+				if (!gridCell.IsCorrect) return;
+			}
 
-		// private void OnCellFilled(GridCell filledCell)
-		// {
-		// 	var directions = new Vector2Int[] { Direction.up, Direction.down, Direction.right, Direction.left, };
-		// 	var connectedCells = new List<GridCell> { filledCell };
-		// 	var visitedCells = new bool[CellCount, CellCount];
-		//
-		// 	for (int i = 0; i < connectedCells.Count; i++)
-		// 	{
-		// 		if (visitedCells[connectedCells[i].X, connectedCells[i].Y]) continue; // go next if visited
-		// 		visitedCells[connectedCells[i].X, connectedCells[i].Y] = true; // now has visited
-		//
-		// 		for (int j = 0; j < 4; j++)
-		// 		{
-		// 			var neighbor = GetCell(new Vector2Int(connectedCells[i].X, connectedCells[i].Y) + directions[j]);
-		// 			if (!neighbor) continue; // can overflow from the edges
-		//
-		// 			if (!visitedCells[neighbor.X, neighbor.Y] && !neighbor.IsEmpty)
-		// 				connectedCells.Add(neighbor);
-		// 		}
-		// 	}
-		// }
+			GameManager.Instance.Win();
+		}
 
 		public GridCell GetCell(Vector2Int position) => Cells.TryGetValue(position, out var cell) ? cell : null;
 
