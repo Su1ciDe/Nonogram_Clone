@@ -26,6 +26,11 @@ namespace Grid
 
 		public event UnityAction<GridCell> OnStateChanged;
 
+		private void OnDestroy()
+		{
+			incorrect.DOKill();
+		}
+
 		public void OnPointerDown(PointerEventData eventData)
 		{
 			if (!Player.Instance.CanPlay) return;

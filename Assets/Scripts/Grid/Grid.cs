@@ -33,16 +33,14 @@ namespace Grid
 		private void Awake()
 		{
 			CellStateCount = System.Enum.GetNames(typeof(CellState)).Length;
-		}
-
-		private void OnEnable()
-		{
 			LevelManager.OnLevelLoad += OnLevelLoaded;
+			LevelManager.OnLevelUnload += OnLevelUnloaded;
 		}
 
 		private void OnDestroy()
 		{
 			LevelManager.OnLevelLoad -= OnLevelLoaded;
+			LevelManager.OnLevelUnload -= OnLevelUnloaded;
 			foreach (var cell in Cells.Values)
 				cell.OnStateChanged -= OnCellStateChanged;
 		}
@@ -53,12 +51,15 @@ namespace Grid
 			CreateGrid(level.Cells);
 		}
 
+		private void OnLevelUnloaded()
+		{
+			ClearGrid();
+		}
+
 		#region Grid Generation
 
 		public void CreateGrid(bool[][] cells)
 		{
-			ClearAllCells();
-
 			Cells = new Dictionary<Vector2Int, GridCell>(CellCount * CellCount);
 
 			float cellScale = gridLayout.GetComponent<RectTransform>().rect.width / CellCount;
@@ -146,13 +147,18 @@ namespace Grid
 			sideNumber.SetNumber(_number);
 		}
 
-		private void ClearAllCells()
+		private void ClearGrid()
 		{
 			foreach (var cell in Cells.Values)
 			{
 				cell.OnStateChanged -= OnCellStateChanged;
 				Destroy(cell.gameObject);
 			}
+
+			foreach (Transform leftNumbers in leftNumberPanel)
+				Destroy(leftNumbers.gameObject);
+			foreach (Transform topNumbers in topNumberPanel)
+				Destroy(topNumbers.gameObject);
 		}
 
 		#endregion

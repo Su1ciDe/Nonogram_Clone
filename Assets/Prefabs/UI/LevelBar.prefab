@@ -144,7 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7690546436475694989}
-  - component: {fileID: 7690546436475694988}
+  - component: {fileID: 2636768623178722699}
   m_Layer: 5
   m_Name: LevelBar
   m_TagString: Untagged
@@ -173,14 +173,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &7690546436475694988
-CanvasRenderer:
+--- !u!114 &2636768623178722699
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7690546436475694990}
-  m_CullTransparentMesh: 1
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9e36986f4a6451bb5ca9a8404b603ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  txtLevelNo: {fileID: 7690546435851053639}
 --- !u!1 &7690546436806412093
 GameObject:
   m_ObjectHideFlags: 0

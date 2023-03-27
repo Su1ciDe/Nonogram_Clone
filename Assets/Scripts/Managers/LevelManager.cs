@@ -32,21 +32,17 @@ namespace Managers
 			levelCount = levels.Length;
 		}
 
-		private void Start()
-		{
-			LoadCurrentLevel();
-		}
-
-		private void LoadCurrentLevel()
+		public void LoadCurrentLevel()
 		{
 			int levelIndex = LevelNo % levelCount;
-			CurrentLevel = new Level(LevelSystem.LevelSystem.Load(levelIndex));
+			CurrentLevel = new Level(LevelSystem.LevelSystem.Load(levelIndex), LevelNo);
 			LoadLevel();
 		}
 
-		public void LoadLevel()
+		private void LoadLevel()
 		{
 			OnLevelLoad?.Invoke(CurrentLevel);
+			StartLevel();
 		}
 
 		public void StartLevel()
@@ -55,13 +51,6 @@ namespace Managers
 		}
 
 		public void NextLevel()
-		{
-			UnloadLevel();
-
-			LoadCurrentLevel();
-		}
-
-		public void RetryLevel()
 		{
 			UnloadLevel();
 
