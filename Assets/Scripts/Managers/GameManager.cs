@@ -3,7 +3,7 @@ using Utility;
 
 namespace Managers
 {
-	[DefaultExecutionOrder(-2)]
+	[DefaultExecutionOrder(-1)]
 	public class GameManager : Singleton<GameManager>
 	{
 		public Camera MainCamera { get; private set; }
