@@ -1,6 +1,7 @@
 ﻿using Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using Utility;
 
 namespace UI
 {
@@ -18,6 +19,8 @@ namespace UI
 		{
 			btnNextLevel.onClick.AddListener(NextLevel);
 			btnBackToMainMenu.onClick.AddListener(BackToMainMenu);
+
+			ParticlePooler.Instance.Spawn("Confetti", Vector3.zero);
 		}
 
 		private void OnDisable()
