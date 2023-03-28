@@ -88,10 +88,7 @@ namespace Grid
 							else
 								rowNumbers.Add(1);
 						}
-					}
 
-					if (x > 0) //column
-					{
 						if (cells[y][x])
 						{
 							if (cells[y - 1][x])
@@ -99,6 +96,20 @@ namespace Grid
 							else
 								columnNumbers.Add(1);
 						}
+					}
+					else
+					{
+						if (cells[x][y])
+							rowNumbers.Add(1);
+						if (cells[y][x])
+							columnNumbers.Add(1);
+					}
+
+					if (x > 0) //column
+					{
+					}
+					else
+					{
 					}
 				}
 

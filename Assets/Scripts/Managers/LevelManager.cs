@@ -1,4 +1,5 @@
-﻿using LevelSystem;
+﻿using Grid;
+using LevelSystem;
 using UnityEngine;
 using UnityEngine.Events;
 using Utility;
@@ -35,7 +36,13 @@ namespace Managers
 		public void LoadCurrentLevel()
 		{
 			int levelIndex = LevelNo % levelCount;
-			CurrentLevel = new Level(LevelSystem.LevelSystem.Load(levelIndex), LevelNo);
+			CurrentLevel = new Level(LevelSystem.LevelSystem.Load(levelIndex), LevelNo, false);
+			LoadLevel();
+		}
+
+		public void LoadProceduralLevel(bool[][] cells, Difficulty difficulty)
+		{
+			CurrentLevel = new Level(cells, LevelNo, true, difficulty);
 			LoadLevel();
 		}
 
@@ -52,9 +59,17 @@ namespace Managers
 
 		public void NextLevel()
 		{
+			var level = CurrentLevel;
 			UnloadLevel();
 
-			LoadCurrentLevel();
+			if (level.IsProcedural)
+			{
+				LoadProceduralLevel(ProceduralLevel.GenerateLevel(level.Difficulty, level.Cells.GetLength(0)), level.Difficulty);
+			}
+			else
+			{
+				LoadCurrentLevel();
+			}
 		}
 
 		public void UnloadLevel()
@@ -65,11 +80,10 @@ namespace Managers
 
 		public void Win()
 		{
-			LevelNo++;
+			if (!CurrentLevel.IsProcedural)
+				LevelNo++;
 
 			OnLevelSuccess?.Invoke();
-
-			Debug.Log("win");
 		}
 	}
 }

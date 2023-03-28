@@ -50,5 +50,12 @@ namespace Managers
 			LevelBar.gameObject.SetActive(true);
 			backToMainMenu.gameObject.SetActive(true);
 		}
+
+		public void ShowRandomLevelUI()
+		{
+			MainMenu.Close();
+			Grid.gameObject.SetActive(true);
+			backToMainMenu.gameObject.SetActive(true);
+		}
 	}
 }

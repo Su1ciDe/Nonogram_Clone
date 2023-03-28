@@ -1336,7 +1336,7 @@ MonoBehaviour:
   m_Placeholder: {fileID: 0}
   m_ItemText: {fileID: 735471770}
   m_ItemImage: {fileID: 0}
-  m_Value: 0
+  m_Value: 1
   m_Options:
     m_Options:
     - m_Text: Option A
@@ -1807,6 +1807,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   btnPlayLevels: {fileID: 1847003737}
   btnPlayRandom: {fileID: 33119481}
+  drpDifficulty: {fileID: 490858429}
+  drpGridSize: {fileID: 2103240193}
 --- !u!1 &674909971
 GameObject:
   m_ObjectHideFlags: 0
@@ -2895,7 +2897,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Option A
+  m_text: Option B
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
