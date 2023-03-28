@@ -16,17 +16,20 @@ namespace Managers
 		[SerializeField] private MainMenu mainMenu;
 		[SerializeField] private LevelBar levelBar;
 		[SerializeField] private Button backToMainMenu;
+		[SerializeField] private Button hint;
 		[SerializeField] private WinScreen winScreen;
 
 		private void Awake()
 		{
 			backToMainMenu.onClick.AddListener(GoBackToMainMenu);
+			hint.onClick.AddListener(grid.ShowHint);
 			WinScreen.Init();
 		}
 
 		private void OnDestroy()
 		{
 			backToMainMenu.onClick.RemoveListener(GoBackToMainMenu);
+			hint.onClick.RemoveListener(grid.ShowHint);
 		}
 
 		public void GoBackToMainMenu()
@@ -41,6 +44,7 @@ namespace Managers
 			LevelBar.gameObject.SetActive(false);
 			Grid.gameObject.SetActive(false);
 			backToMainMenu.gameObject.SetActive(false);
+			hint.gameObject.SetActive(false);
 		}
 
 		public void ShowPlayLevelUI()
@@ -49,6 +53,7 @@ namespace Managers
 			Grid.gameObject.SetActive(true);
 			LevelBar.gameObject.SetActive(true);
 			backToMainMenu.gameObject.SetActive(true);
+			hint.gameObject.SetActive(true);
 		}
 
 		public void ShowRandomLevelUI()
@@ -56,6 +61,7 @@ namespace Managers
 			MainMenu.Close();
 			Grid.gameObject.SetActive(true);
 			backToMainMenu.gameObject.SetActive(true);
+			hint.gameObject.SetActive(true);
 		}
 	}
 }
