@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using LevelSystem;
 using Managers;
 using UnityEngine;
@@ -183,12 +182,6 @@ namespace Grid
 			}
 
 			GameManager.Instance.Win();
-		}
-
-		public void ShowHint()
-		{
-			var filledCells = Cells.Values.Where(x => x.CorrectState == CellState.Filled && x.CurrentState != CellState.Filled).ToArray();
-			filledCells[Random.Range(0, filledCells.Length)].ShowHint();
 		}
 
 		public GridCell GetCell(Vector2Int position) => Cells.TryGetValue(position, out var cell) ? cell : null;

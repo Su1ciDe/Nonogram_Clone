@@ -23,7 +23,6 @@ namespace Grid
 		[SerializeField] private GameObject xState;
 		[Space]
 		[SerializeField] private Image incorrect;
-		[SerializeField] private Image hint;
 
 		public event UnityAction<GridCell> OnStateChanged;
 
@@ -69,7 +68,6 @@ namespace Grid
 			if (IsCorrect)
 			{
 				incorrect.gameObject.SetActive(false);
-				HideHint();
 			}
 			else
 			{
@@ -82,24 +80,6 @@ namespace Grid
 					incorrect.color = color;
 				});
 			}
-		}
-
-		public void ShowHint()
-		{
-			hint.gameObject.SetActive(true);
-			hint.DOKill();
-			hint.DOFade(1, .25f).SetEase(Ease.InOutCirc).SetLoops(-1, LoopType.Yoyo).OnKill(() =>
-			{
-				var color = hint.color;
-				color.a = 0;
-				hint.color = color;
-			});
-		}
-
-		private void HideHint()
-		{
-			hint.DOKill();
-			hint.gameObject.SetActive(false);
 		}
 	}
 }
